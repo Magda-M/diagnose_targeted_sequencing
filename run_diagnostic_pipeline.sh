@@ -43,7 +43,7 @@ echo "\n####Process sample:" "$FASTQ_PATH$SAMPLE_NAME"
 #bedtools intersect -bed -abam "$RESULTS_PATH$SAMPLE_NAME".bam -b "$PADDED_CAPTURE_TARGET" | wc -l > "$RESULTS_PATH$SAMPLE_NAME"_padded_target_count
 
 #echo "\n####Calculate depth of coverage"
-#DepthOfCoverage is not present in GATK4 - GATK3 must be used
+##DepthOfCoverage is not present in GATK4 - GATK3 must be used
 #java -Xmx4g -Xms4g -jar /home/magda/GenomeAnalysisTK-3.8-1-0-gf15c1c3ef/GenomeAnalysisTK.jar -T DepthOfCoverage -R /mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa -I "$RESULTS_PATH$SAMPLE_NAME".bam -o "$RESULTS_PATH$SAMPLE_NAME"_gatk_primary_target_coverage -L "$PRIMARY_TARGET" -ct 1 -ct 10 -ct 20
 
 #java -Xmx4g -Xms4g -jar /home/magda/GenomeAnalysisTK-3.8-1-0-gf15c1c3ef/GenomeAnalysisTK.jar -T DepthOfCoverage -R /mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa -I "$RESULTS_PATH$SAMPLE_NAME".bam -o "$RESULTS_PATH$SAMPLE_NAME"_gatk_capture_target_coverage -L "$CAPTURE_TARGET" -ct 1 -ct 10 -ct 20
@@ -51,22 +51,22 @@ echo "\n####Process sample:" "$FASTQ_PATH$SAMPLE_NAME"
 #echo "\n###Create Picard Interval Lists"
 #samtools view -H "$RESULTS_PATH$SAMPLE_NAME".bam > "$RESULTS_PATH$SAMPLE_NAME"_bam_header.txt
 
-#echo "\n###Create a Picard Target Interval List Body"
-#cat "$PRIMARY_TARGET" | gawk -F'\t' '{print $1 "\t" $2+1 "\t" $3 "\t+\ttinterval_" NR}' > "$RESULTS_PATH$SAMPLE_NAME"_target.body.txt
+echo "\n###Create a Picard Target Interval List Body"
+cat "$PRIMARY_TARGET" | awk '{print $1 "\t" $2+1 "\t" $3 "\t+\tinterval_" NR}' > "$RESULTS_PATH$SAMPLE_NAME"_target.body.txt
 
 #cut -f 1-4 "$RESULTS_PATH$SAMPLE_NAME"_target.body.txt > one
 #cat "$RESULTS_PATH$SAMPLE_NAME"_target.body.txt | gawk '{print $5,":", $6 NR}' | awk '{gsub(" ", "");print}' > two
 #paste one two > "$RESULTS_PATH$SAMPLE_NAME"_target.body.txt
 
-#cat "$CAPTURE_TARGET" | gawk -F'\t' '{print $1 "\t" $2+1 "\t" $3 "\t+\ttinterval_" NR}' > "$RESULTS_PATH$SAMPLE_NAME"_bait.body.txt
+cat "$CAPTURE_TARGET" | awk '{print $1 "\t" $2+1 "\t" $3 "\t+\tinterval_" NR}' > "$RESULTS_PATH$SAMPLE_NAME"_bait.body.txt
 
 #cut -f 1-4 "$RESULTS_PATH$SAMPLE_NAME"_bait.body.txt > one
 #cat "$RESULTS_PATH$SAMPLE_NAME"_bait.body.txt | gawk '{print $5,":", $6 NR}' | awk '{gsub(" ", "");print}' > two
 #paste one two >  "$RESULTS_PATH$SAMPLE_NAME"_bait.body.txt
 
-#echo "\n###Concatenate to create a picard bait interval list"
-#cat "$RESULTS_PATH$SAMPLE_NAME"_bam_header.txt "$RESULTS_PATH$SAMPLE_NAME"_bait.body.txt > "$RESULTS_PATH$SAMPLE_NAME"_bait_intervals.txt
-#cat "$RESULTS_PATH$SAMPLE_NAME"_bam_header.txt "$RESULTS_PATH$SAMPLE_NAME"_target.body.txt > "$RESULTS_PATH$SAMPLE_NAME"_target_intervals.txt
+echo "\n###Concatenate to create a picard bait interval list"
+cat "$RESULTS_PATH$SAMPLE_NAME"_bam_header.txt "$RESULTS_PATH$SAMPLE_NAME"_bait.body.txt > "$RESULTS_PATH$SAMPLE_NAME"_bait_intervals.txt
+cat "$RESULTS_PATH$SAMPLE_NAME"_bam_header.txt "$RESULTS_PATH$SAMPLE_NAME"_target.body.txt > "$RESULTS_PATH$SAMPLE_NAME"_target_intervals.txt
 
-#echo "\n###Hybrid Selection analysis"
-#java -Xmx4g -Xms4g -jar /home/magda/picard.jar CalculateHsMetrics  BAIT_INTERVALS="$RESULTS_PATH$SAMPLE_NAME"_bait_intervals.txt TARGET_INTERVALS="$RESULTS_PATH$SAMPLE_NAME"_target_intervals.txt INPUT="$RESULTS_PATH$SAMPLE_NAME".bam OUTPUT="$RESULTS_PATH$SAMPLE_NAME"I_picard_hs_metrics.txt METRIC_ACCUMULATION_LEVEL=ALL_READS REFERENCE_SEQUENCE=/mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa VALIDATION_STRINGENCY=LENIENT TMP_DIR=.
+echo "\n###Hybrid Selection analysis"
+java -Xmx4g -Xms4g -jar /home/magda/picard.jar CollectHsMetrics  BAIT_INTERVALS="$RESULTS_PATH$SAMPLE_NAME"_bait_intervals.txt TARGET_INTERVALS="$RESULTS_PATH$SAMPLE_NAME"_target_intervals.txt INPUT="$RESULTS_PATH$SAMPLE_NAME".bam OUTPUT="$RESULTS_PATH$SAMPLE_NAME"I_picard_hs_metrics.txt METRIC_ACCUMULATION_LEVEL=ALL_READS REFERENCE_SEQUENCE=/mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa VALIDATION_STRINGENCY=LENIENT TMP_DIR=.
