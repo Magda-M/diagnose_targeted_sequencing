@@ -20,7 +20,7 @@ echo "\n####Trimming bad reads and getting read of adapters"
 java -Xms4g -Xmx4g -jar /home/magda/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 20 -phred33 "$FASTQ_PATH$SAMPLE_NAME"_R1_001.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_001.fastq "$FASTQ_PATH$SAMPLE_NAME"_R1_trimmed.fastq "$FASTQ_PATH$SAMPLE_NAME"_R1_unpaired.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_trimmed.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_unpaired.fastq ILLUMINACLIP:/home/magda/Trimmomatic-0.38/adapters/TruSeq3-PE-2.fa:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:20 MINLEN:75
 
 echo "\n####Aligning reads"
-bwa mem -R '@RG\tID:id\tPL:illumina\tLB:NIMBLEGEN\tSM:$SAMPLE_NAME' /mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa -t 28 -M "$FASTQ_PATH$SAMPLE_NAME"_R1_trimmed.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_trimmed.fastq | samtools view -Sb - > "$RESULTS_PATH$SAMPLE_NAME"_unsorted.bam
+/home/magda/bwa/bwa mem -R '@RG\tID:id\tPL:illumina\tLB:NIMBLEGEN\tSM:$SAMPLE_NAME' /mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa -t 28 -M "$FASTQ_PATH$SAMPLE_NAME"_R1_trimmed.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_trimmed.fastq | samtools view -Sb - > "$RESULTS_PATH$SAMPLE_NAME"_unsorted.bam
 
 echo "\n####Sort bam file"
 samtools sort "$RESULTS_PATH$SAMPLE_NAME"_unsorted.bam -o "$RESULTS_PATH$SAMPLE_NAME"_sorted.bam
