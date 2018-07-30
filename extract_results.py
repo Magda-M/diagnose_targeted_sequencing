@@ -84,7 +84,7 @@ def extract_results(sample_name):
 	add_column_and_value(results, existing_columns, new_sample_series, "Perc on padded target", float(padded_target_count)/float(flagstat_results['mapped']))
 
 	results = results.append(new_sample_series, ignore_index=True)
-	results = results.reindex(existing_columns, axis=1)
+	results = results.reindex_axis(existing_columns, axis=1)
 	results.to_csv(RESULTS_CSV, sep='\t', index=False)
 
 if __name__ == "__main__":
