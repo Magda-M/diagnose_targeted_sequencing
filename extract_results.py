@@ -19,7 +19,6 @@ def extract_results(sample_name):
 		
 	existing_columns = list(results.columns)
 
-	sample_name="TEST"
 	LOG_FILE='../results/' + sample_name + '.log'
 
 	#create new row for the sample
