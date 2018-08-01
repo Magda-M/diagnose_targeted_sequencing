@@ -10,7 +10,7 @@ CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/Symfonia_v2_capture_targets.
 PADDED_CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/Symfonia_v2_capture_targets_padded.bed"
 
 DATE = '20180801'
-RESULTS_CSV='../results/summary%s.csv' % DATE
+RESULTS_CSV='../results/summary_horizontal_%s.csv' % DATE
 
 def add_column_and_value(results, existing_columns, new_sample_series, column_name, value):
 	if column_name not in existing_columns:
@@ -85,11 +85,11 @@ def extract_results(sample_name):
 	add_column_and_value(results, existing_columns, new_sample_series, "Perc on padded target", float(padded_target_count)/float(flagstat_results['mapped']))
 
     #coverage on primary and capture target
-	for target_type in ['primary', 'capture', 'padded']:
+	for target_type in ['primary', 'capture']:
 		gatk_coverage = pd.read_csv('../results/' + sample_name + '_gatk_%s_target_coverage.sample_summary' % target_type,sep='\t')
 		gatk_mean = gatk_coverage.iloc[0]['mean']
 		gatk_3rd = gatk_coverage.iloc[0]['granular_third_quartile']
-		gatk_median = gatk_coverage.iloc[0]['granular_third_median']
+		gatk_median = gatk_coverage.iloc[0]['granular_median']
 		gatk_1st = gatk_coverage.iloc[0]['granular_first_quartile']
 		gatk_1 = gatk_coverage.iloc[0]['%_bases_above_1']
 		gatk_10 = gatk_coverage.iloc[0]['%_bases_above_10']
@@ -99,16 +99,26 @@ def extract_results(sample_name):
 		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target coverage 3rd quart" % target_type, gatk_3rd)
 		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target coverage median" % target_type, gatk_median)
 		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target coverage 1st quart" % target_type, gatk_1st)
-		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target % bases > 1" % target_type, gatk_1)
-		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target % bases > 10" % target_type, gatk_10)
-		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target % bases > 20" % target_type, gatk_20)
+		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target perc bases > 1" % target_type, gatk_1)
+		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target perc bases > 10" % target_type, gatk_10)
+		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target perc bases > 20" % target_type, gatk_20)
 
 	#HsMetrics
-
+	picard_hsmetrics = pd.read_csv('../results/' + sample_name + '_picard_hs_metrics.txt',
+								  skiprows=[0,1,2,3,4,5], nrows=1, sep='\t')
+	for col in list(picard_hsmetrics.columns):
+		metric_value = picard_hsmetrics.iloc[0][col]
+		add_column_and_value(results, existing_columns, new_sample_series, col, metric_value)
+			
 
 	results = results.append(new_sample_series, ignore_index=True)
 	results = results.reindex_axis(existing_columns, axis=1)
 	results.to_csv(RESULTS_CSV, sep='\t', index=False)
+
+	#transpose final table
+	results_updated = pd.read_csv(RESULTS_CSV, sep='\t')
+	RESULTS_CSV_T = '../results/summary%s.csv' % DATE
+	results_updated.T.to_csv(RESULTS_CSV_T, sep='\t', header=False)
 
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
