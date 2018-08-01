@@ -9,7 +9,8 @@ PRIMARY_TARGET="/mnt/chr11/Data/magda/Powroty/panel/Symfonia_v2_primary_targets.
 CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/Symfonia_v2_capture_targets.bed"
 PADDED_CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/Symfonia_v2_capture_targets_padded.bed"
 
-RESULTS_CSV='../results/summary.csv'
+DATE = '20180801'
+RESULTS_CSV='../results/summary%s.csv' % date
 
 def add_column_and_value(results, existing_columns, new_sample_series, column_name, value):
 	if column_name not in existing_columns:
@@ -82,6 +83,28 @@ def extract_results(sample_name):
 	add_column_and_value(results, existing_columns, new_sample_series, "Perc on primary target", float(primary_target_count)/float(flagstat_results['mapped']))
 	add_column_and_value(results, existing_columns, new_sample_series, "Perc on capture target", float(capture_target_count)/float(flagstat_results['mapped']))
 	add_column_and_value(results, existing_columns, new_sample_series, "Perc on padded target", float(padded_target_count)/float(flagstat_results['mapped']))
+
+    #coverage on primary and capture target
+	for target_type in ['primary', 'capture', 'padded']:
+		gatk_coverage = pd.read_csv('../results/' + sample_name + '_gatk_%s_target_coverage.sample_summary' % target_type,sep='\t)
+		gatk_mean = gatk_coverage.iloc[0]['mean']
+		gatk_3rd = gatk_coverage.iloc[0]['granular_third_quartile']
+		gatk_median = gatk_coverage.iloc[0]['granular_third_median']
+		gatk_1st = gatk_coverage.iloc[0]['granular_first_quartile']
+		gatk_1 = gatk_coverage.iloc[0]['%_bases_above_1']
+		gatk_10 = gatk_coverage.iloc[0]['%_bases_above_10']
+		gatk_20 = gatk_coverage.iloc[0]['%_bases_above_20']
+
+		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target coverage mean" % target_type, gatk_mean)
+		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target coverage 3rd quart" % target_type, gatk_3rd)
+		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target coverage median" % target_type, gatk_median)
+		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target coverage 1st quart" % target_type, gatk_1st)
+		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target % bases > 1" % target_type, gatk_1)
+		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target % bases > 10" % target_type, gatk_10)
+		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target % bases > 20" % target_type, gatk_20)
+
+	#HsMetrics
+
 
 	results = results.append(new_sample_series, ignore_index=True)
 	results = results.reindex_axis(existing_columns, axis=1)
