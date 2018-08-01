@@ -10,7 +10,7 @@ CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/Symfonia_v2_capture_targets.
 PADDED_CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/Symfonia_v2_capture_targets_padded.bed"
 
 DATE = '20180801'
-RESULTS_CSV='../results/summary%s.csv' % date
+RESULTS_CSV='../results/summary%s.csv' % DATE
 
 def add_column_and_value(results, existing_columns, new_sample_series, column_name, value):
 	if column_name not in existing_columns:
