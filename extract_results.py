@@ -86,7 +86,7 @@ def extract_results(sample_name):
 
     #coverage on primary and capture target
 	for target_type in ['primary', 'capture', 'padded']:
-		gatk_coverage = pd.read_csv('../results/' + sample_name + '_gatk_%s_target_coverage.sample_summary' % target_type,sep='\t)
+		gatk_coverage = pd.read_csv('../results/' + sample_name + '_gatk_%s_target_coverage.sample_summary' % target_type,sep='\t')
 		gatk_mean = gatk_coverage.iloc[0]['mean']
 		gatk_3rd = gatk_coverage.iloc[0]['granular_third_quartile']
 		gatk_median = gatk_coverage.iloc[0]['granular_third_median']
