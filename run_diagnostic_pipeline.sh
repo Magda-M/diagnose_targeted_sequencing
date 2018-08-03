@@ -5,28 +5,28 @@
 
 SAMPLE_NAME="$1"
 FASTQ_PATH="/mnt/chr11/Data/magda/Powroty/panel/fastq/"
-RESULTS_PATH="/mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/"
+RESULTS_PATH="/mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/merged/"
 PRIMARY_TARGET="/mnt/chr11/Data/magda/Powroty/panel/Symfonia_v2_primary_targets.bed"
 CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/Symfonia_v2_capture_targets.bed"
 PADDED_CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/Symfonia_v2_capture_targets_padded.bed"
 
-echo "\n####Process sample:" "$FASTQ_PATH$SAMPLE_NAME"
+echo "\n####Process sample:" "$SAMPLE_NAME"
 
 #echo "\n####Unpack"
 #gunzip "$FASTQ_PATH$SAMPLE_NAME"_R1_001.fastq.gz
 #gunzip "$FASTQ_PATH$SAMPLE_NAME"_R2_001.fastq.gz
 
-echo "\n####Trimming bad reads and getting read of adapters"
-java -Xms4g -Xmx4g -jar /home/magda/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 20 -phred33 "$FASTQ_PATH$SAMPLE_NAME"_R1_001.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_001.fastq "$FASTQ_PATH$SAMPLE_NAME"_R1_trimmed.fastq "$FASTQ_PATH$SAMPLE_NAME"_R1_unpaired.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_trimmed.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_unpaired.fastq ILLUMINACLIP:/home/magda/Trimmomatic-0.38/adapters/TruSeq3-PE-2.fa:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:20 MINLEN:75
+#echo "\n####Trimming bad reads and getting read of adapters"
+#java -Xms4g -Xmx4g -jar /home/magda/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 20 -phred33 "$FASTQ_PATH$SAMPLE_NAME"_R1_001.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_001.fastq "$FASTQ_PATH$SAMPLE_NAME"_R1_trimmed.fastq "$FASTQ_PATH$SAMPLE_NAME"_R1_unpaired.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_trimmed.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_unpaired.fastq ILLUMINACLIP:/home/magda/Trimmomatic-0.38/adapters/TruSeq3-PE-2.fa:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:20 MINLEN:75
 
-echo "\n####Aligning reads"
-/home/magda/bwa/bwa mem -R '@RG\tID:id\tPL:illumina\tLB:NIMBLEGEN\tSM:$SAMPLE_NAME' /mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa -t 28 -M "$FASTQ_PATH$SAMPLE_NAME"_R1_trimmed.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_trimmed.fastq | samtools view -Sb - > "$RESULTS_PATH$SAMPLE_NAME"_unsorted.bam
+#echo "\n####Aligning reads"
+#/home/magda/bwa/bwa mem -R '@RG\tID:id\tPL:illumina\tLB:NIMBLEGEN\tSM:$SAMPLE_NAME' /mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa -t 28 -M "$FASTQ_PATH$SAMPLE_NAME"_R1_trimmed.fastq "$FASTQ_PATH$SAMPLE_NAME"_R2_trimmed.fastq | samtools view -Sb - > "$RESULTS_PATH$SAMPLE_NAME"_unsorted.bam
 
-echo "\n####Sort bam file"
-samtools sort "$RESULTS_PATH$SAMPLE_NAME"_unsorted.bam -o "$RESULTS_PATH$SAMPLE_NAME"_sorted.bam
+#echo "\n####Sort bam file"
+#samtools sort "$RESULTS_PATH$SAMPLE_NAME"_unsorted.bam -o "$RESULTS_PATH$SAMPLE_NAME"_sorted.bam
 
 echo "\n####Mark duplicates"
-java -Xmx4g -Xms4g -jar /home/magda/picard.jar MarkDuplicates VALIDATION_STRINGENCY=LENIENT INPUT="$RESULTS_PATH$SAMPLE_NAME"_sorted.bam OUTPUT="$RESULTS_PATH$SAMPLE_NAME".bam METRICS_FILE="$RESULTS_PATH$SAMPLE_NAME"_picard_markduplicates_metrics.txt REMOVE_DUPLICATES=false ASSUME_SORTED=true
+java -Xmx4g -Xms4g -jar /home/magda/picard.jar MarkDuplicates VALIDATION_STRINGENCY=LENIENT INPUT="$RESULTS_PATH$SAMPLE_NAME".sorted.bam OUTPUT="$RESULTS_PATH$SAMPLE_NAME".bam METRICS_FILE="$RESULTS_PATH$SAMPLE_NAME"_picard_markduplicates_metrics.txt REMOVE_DUPLICATES=false ASSUME_SORTED=true
 
 echo "\n####Index bam file"
 samtools index  "$RESULTS_PATH$SAMPLE_NAME".bam
