@@ -38,6 +38,13 @@ java -Xms4g -Xmx4g -jar /home/magda/Trimmomatic-0.38/trimmomatic-0.38.jar PE -th
    "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R2_unpaired_minlen50.fastq \
    ILLUMINACLIP:/home/magda/Trimmomatic-0.38/adapters/TruSeq3-PE-2.fa:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:20 MINLEN:50
 
+echo "\n####Aligning reads - lane 1"
+/home/magda/bwa/bwa mem -R '@RG\tID:'"$SAMPLE_NAME"'_L001\tPL:illumina\tLB:NIMBLEGEN\tSM:'"$SAMPLE_NAME" \
+   /mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa -t 40 \
+   -M "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R1_trimmed_minlen50.fastq \
+   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R2_trimmed_minlen50.fastq | \
+   samtools view -Sb - > "$RESULTS_PATH$SAMPLE_NAME"_L001_unsorted.bam
+
 echo "\n####Aligning reads - lane 2"
 /home/magda/bwa/bwa mem -R '@RG\tID:'"$SAMPLE_NAME"'_L002\tPL:illumina\tLB:NIMBLEGEN\tSM:'"$SAMPLE_NAME" \
    /mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa -t 40 \
