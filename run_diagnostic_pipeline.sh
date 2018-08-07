@@ -59,7 +59,7 @@ echo "\n####Sort bam file"
 samtools sort "$RESULTS_PATH$SAMPLE_NAME"_unsorted.bam -o "$RESULTS_PATH$SAMPLE_NAME"_sorted.bam
 
 echo "\n####Mark duplicates"
-java -Xmx10g -Xms10g -jar /home/magda/picard.jar MarkDuplicates VALIDATION_STRINGENCY=LENIENT INPUT="$RESULTS_PATH$SAMPLE_NAME".sorted.bam OUTPUT="$RESULTS_PATH$SAMPLE_NAME".bam METRICS_FILE="$RESULTS_PATH$SAMPLE_NAME"_picard_markduplicates_metrics.txt REMOVE_DUPLICATES=false ASSUME_SORTED=true
+java -Xmx10g -Xms10g -jar /home/magda/picard.jar MarkDuplicates VALIDATION_STRINGENCY=LENIENT INPUT="$RESULTS_PATH$SAMPLE_NAME"_sorted.bam OUTPUT="$RESULTS_PATH$SAMPLE_NAME".bam METRICS_FILE="$RESULTS_PATH$SAMPLE_NAME"_picard_markduplicates_metrics.txt REMOVE_DUPLICATES=false ASSUME_SORTED=true
 
 echo "\n####Index bam file"
 samtools index  "$RESULTS_PATH$SAMPLE_NAME".bam
