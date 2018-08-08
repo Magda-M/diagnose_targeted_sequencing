@@ -1,12 +1,13 @@
 #!/bin/bash
 
-for l in /mnt/chr11/Data/magda/Powroty/panel/fastq/MARCEL*_L001_R1_001.fastq;
-   do path=$(echo $l | cut -d/ -f9); 
-   sample=$(echo $path | cut -d_ -f1-2);
+FASTQ_PATH="$1"
+RESULTS_PATH="$2"
+
+for l in "$FASTQ_PATH"/*_L001_R1_001.fastq;
+   do path=$(echo ${l##*/});
+   sample=$(echo $path | cut -d_ -f1-3);
    echo -e "\n$sample";
-   bash run_diagnostic_pipeline.sh $sample &> /mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/merged/minlen50/"$sample".log 
+   bash run_diagnostic_pipeline.sh $sample $FASTQ_PATH $RESULTS_PATH &> "$RESULTS_PATH$sample".log 
    done
 
 
-#MARCEL4_S14_L001
-#MARCEL2_S12_L002_R1_001.fastq

@@ -4,8 +4,8 @@
 #and code obtained from Bartosz Wojtas
 
 SAMPLE_NAME="$1"
-FASTQ_PATH="/mnt/chr11/Data/magda/Powroty/panel/fastq/"
-RESULTS_PATH="/mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/merged/minlen50/"
+FASTQ_PATH="$2"
+RESULTS_PATH="$3"
 PRIMARY_TARGET="/mnt/chr11/Data/magda/Powroty/panel/Symfonia_v2_primary_targets.bed"
 CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/Symfonia_v2_capture_targets.bed"
 PADDED_CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/Symfonia_v2_capture_targets_padded.bed"
@@ -82,14 +82,14 @@ java -Xmx10g -Xms10g -jar /home/magda/GenomeAnalysisTK-3.8-1-0-gf15c1c3ef/Genome
    -R /mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa \
    -I "$RESULTS_PATH$SAMPLE_NAME".bam \
    -o "$RESULTS_PATH$SAMPLE_NAME"_gatk_primary_target_coverage \
-   -L "$PRIMARY_TARGET" -ct 1 -ct 10 -ct 20 -nt 10
+   -L "$PRIMARY_TARGET" -ct 1 -ct 10 -ct 20
 
 java -Xmx10g -Xms10g -jar /home/magda/GenomeAnalysisTK-3.8-1-0-gf15c1c3ef/GenomeAnalysisTK.jar \
    -T DepthOfCoverage \
    -R /mnt/chr11/Data/magda/Powroty/panel/ref/hg38.fa \
    -I "$RESULTS_PATH$SAMPLE_NAME".bam \
    -o "$RESULTS_PATH$SAMPLE_NAME"_gatk_capture_target_coverage \
-   -L "$CAPTURE_TARGET" -ct 1 -ct 10 -ct 20 -nt 10
+   -L "$CAPTURE_TARGET" -ct 1 -ct 10 -ct 20
 
 echo -e "\n###Create Picard Interval Lists"
 samtools view -H "$RESULTS_PATH$SAMPLE_NAME".bam > "$RESULTS_PATH$SAMPLE_NAME"_bam_header.txt
