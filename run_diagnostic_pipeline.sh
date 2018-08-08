@@ -20,8 +20,8 @@ echo -e "\n####Process sample:" "$SAMPLE_NAME"
 
 echo -e "\n####Trimming bad reads and getting read of adapters - lane 1"
 java -Xms4g -Xmx4g -jar /home/magda/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 20 -phred33 \
-   "$FASTQ_PATH$SAMPLE_NAME"_L001_R1_001.fastq \
-   "$FASTQ_PATH$SAMPLE_NAME"_L001_R2_001.fastq \
+   "$FASTQ_PATH"/"$SAMPLE_NAME"_L001_R1_001.fastq \
+   "$FASTQ_PATH"/"$SAMPLE_NAME"_L001_R2_001.fastq \
    "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R1_trimmed_minlen50.fastq \
    "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R1_unpaired_minlen50.fastq \
    "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R2_trimmed_minlen50.fastq \
@@ -30,8 +30,8 @@ java -Xms4g -Xmx4g -jar /home/magda/Trimmomatic-0.38/trimmomatic-0.38.jar PE -th
 
 echo -e "\n####Trimming bad reads and getting read of adapters - lane 2"
 java -Xms4g -Xmx4g -jar /home/magda/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 20 -phred33 \
-   "$FASTQ_PATH$SAMPLE_NAME"_L002_R1_001.fastq \
-   "$FASTQ_PATH$SAMPLE_NAME"_L002_R2_001.fastq \
+   "$FASTQ_PATH"/"$SAMPLE_NAME"_L002_R1_001.fastq \
+   "$FASTQ_PATH"/"$SAMPLE_NAME"_L002_R2_001.fastq \
    "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R1_trimmed_minlen50.fastq \
    "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R1_unpaired_minlen50.fastq \
    "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R2_trimmed_minlen50.fastq \
