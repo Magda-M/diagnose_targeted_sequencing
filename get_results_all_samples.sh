@@ -19,8 +19,10 @@ RESULTS_PATH="$1"
 #   done
 
 #merged lanes
-samples_array=( "MARCEL1" "MARCEL2" "MARCEL3" "MARCEL4" )
-for sample in "${samples_array[@]}"
-   do
+
+for l in "$RESULTS_PATH"/*.log
+   do path=$(echo ${l##*/});
+   sample=$(echo $path | cut -d. -f1);
+   echo -e "\n$sample";
    python extract_results.py $sample $RESULTS_PATH
    done
