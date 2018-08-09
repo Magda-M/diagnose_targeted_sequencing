@@ -1,16 +1,12 @@
-import sys
+import sys, os
 import pandas as pd
 import numpy as np
+import datetime
 
-
-FASTQ_PATH="/mnt/chr11/Data/magda/Powroty/panel/fastq/"
-RESULTS_PATH="/mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/"
 PRIMARY_TARGET="/mnt/chr11/Data/magda/Powroty/panel/Symfonia_v2_primary_targets.bed"
 CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/Symfonia_v2_capture_targets.bed"
 PADDED_CAPTURE_TARGET="/mnt/chr11/Data/magda/Powroty/panel/diagnose_sequencing/results/Symfonia_v2_capture_targets_padded.bed"
 
-DATE = '20180801'
-RESULTS_CSV='../results/summary_horizontal_%s.csv' % DATE
 
 def add_column_and_value(results, existing_columns, new_sample_series, column_name, value):
 	if column_name not in existing_columns:
@@ -18,15 +14,15 @@ def add_column_and_value(results, existing_columns, new_sample_series, column_na
 		existing_columns.append(column_name)
 	new_sample_series[column_name] = value	
 
-def extract_results(sample_name):
+def extract_results(sample_name, results_path, results_csv):
 	try:
-		results = pd.read_csv(RESULTS_CSV, sep='\t')
+		results = pd.read_csv(results_csv, sep='\t')
 	except:
 		results = pd.DataFrame({'sample_name' : []})
 		
 	existing_columns = list(results.columns)
 
-	LOG_FILE='../results/' + sample_name + '.log'
+	LOG_FILE = os.path.join(results_path, sample_name + '.log')
 
 	#create new row for the sample
 	values = [sample_name]
@@ -42,13 +38,13 @@ def extract_results(sample_name):
 	add_column_and_value(results, existing_columns, new_sample_series, "Trimmomatic both surviving perc", both_surviving_percent)
 
 	#duplicates metrics
-	with open('../results/' + sample_name + '_picard_markduplicates_metrics.txt', 'r') as markduplicates:
+	with open(os.path.join(results_path, sample_name + '_picard_markduplicates_metrics.txt'), 'r') as markduplicates:
 		markduplicates_results_line = markduplicates.readlines()[7]
 		perc_duplication = float(markduplicates_results_line.split('\t')[-2]) * 100
 	add_column_and_value(results, existing_columns, new_sample_series, "Percent duplication", perc_duplication)	
 
 	#mapping metrics from flagstat
-	with open('../results/' + sample_name + '_samtools_flagstat_metrics.txt', 'r') as flagstat:
+	with open(os.path.join(results_path, sample_name + '_samtools_flagstat_metrics.txt'), 'r') as flagstat:
 		flagstat_lines = flagstat.readlines()
 		flagstat_results = {}
 		for line in flagstat_lines:
@@ -68,7 +64,7 @@ def extract_results(sample_name):
 	add_column_and_value(results, existing_columns, new_sample_series, "Flagstat duplicates", flagstat_results['duplicates'])		
 
 	#insert size metrics
-	with open('../results/' + sample_name + '_picard_insert_size_metrics.txt', 'r') as picard_insert_size:
+	with open(os.path.join(results_path, sample_name + '_picard_insert_size_metrics.txt'), 'r') as picard_insert_size:
 		metrics = picard_insert_size.readlines()[7].strip().split('\t')
 		median = metrics[0]
 		mean = metrics[5]
@@ -76,9 +72,9 @@ def extract_results(sample_name):
 	add_column_and_value(results, existing_columns, new_sample_series, "Insert size mean", mean)
 
 	#on target rate
-	primary_target_count = open('../results/' + sample_name + '_primary_target_count', 'r').read().strip()
-	capture_target_count = open('../results/' + sample_name + '_capture_target_count', 'r').read().strip()
-	padded_target_count = open('../results/' + sample_name + '_padded_target_count', 'r').read().strip()
+	primary_target_count = open(os.path.join(results_path, sample_name + '_primary_target_count'), 'r').read().strip()
+	capture_target_count = open(os.path.join(results_path, sample_name + '_capture_target_count'), 'r').read().strip()
+	padded_target_count = open(os.path.join(results_path, sample_name + '_padded_target_count'), 'r').read().strip()
 
 	add_column_and_value(results, existing_columns, new_sample_series, "Perc on primary target", float(primary_target_count)/float(flagstat_results['mapped']))
 	add_column_and_value(results, existing_columns, new_sample_series, "Perc on capture target", float(capture_target_count)/float(flagstat_results['mapped']))
@@ -86,7 +82,7 @@ def extract_results(sample_name):
 
     #coverage on primary and capture target
 	for target_type in ['primary', 'capture']:
-		gatk_coverage = pd.read_csv('../results/' + sample_name + '_gatk_%s_target_coverage.sample_summary' % target_type,sep='\t')
+		gatk_coverage = pd.read_csv(os.path.join(results_path, sample_name + '_gatk_%s_target_coverage.sample_summary' % target_type), sep='\t')
 		gatk_mean = gatk_coverage.iloc[0]['mean']
 		gatk_3rd = gatk_coverage.iloc[0]['granular_third_quartile']
 		gatk_median = gatk_coverage.iloc[0]['granular_median']
@@ -104,7 +100,7 @@ def extract_results(sample_name):
 		add_column_and_value(results, existing_columns, new_sample_series, "GATK %s target perc bases > 20" % target_type, gatk_20)
 
 	#HsMetrics
-	picard_hsmetrics = pd.read_csv('../results/' + sample_name + '_picard_hs_metrics.txt',
+	picard_hsmetrics = pd.read_csv(os.path.join(results_path, sample_name + '_picard_hs_metrics.txt'),
 								  skiprows=[0,1,2,3,4,5], nrows=1, sep='\t')
 	for col in list(picard_hsmetrics.columns):
 		metric_value = picard_hsmetrics.iloc[0][col]
@@ -113,16 +109,22 @@ def extract_results(sample_name):
 
 	results = results.append(new_sample_series, ignore_index=True)
 	results = results.reindex_axis(existing_columns, axis=1)
-	results.to_csv(RESULTS_CSV, sep='\t', index=False)
+	results.to_csv(results_csv, sep='\t', index=False)
 
 	#transpose final table
-	results_updated = pd.read_csv(RESULTS_CSV, sep='\t')
-	RESULTS_CSV_T = '../results/summary%s.csv' % DATE
-	results_updated.T.to_csv(RESULTS_CSV_T, sep='\t', header=False)
+	results_updated = pd.read_csv(results_csv, sep='\t')
+	results_csv_T = results_csv.replace('_horizontal', '')
+	results_updated.T.to_csv(results_csv_T, sep='\t', header=False)
 
 if __name__ == "__main__":
-	if len(sys.argv) != 2:
-		print("Usage: python %s sample_name" % sys.argv[0])
+	if len(sys.argv) != 3:
+		print("Usage: python %s sample_name results_path" % sys.argv[0])
 		sys.exit(1)
 	sample = sys.argv[1]
-	extract_results(sample)
+	results_path = sys.argv[2]
+
+	today_date = datetime.datetime.today()
+	date = today_date.strftime('%Y%m%d')
+	results_csv = os.path.join(results_path, 'summary_horizontal_%s.csv' % date)
+
+	extract_results(sample, results_path, results_csv)

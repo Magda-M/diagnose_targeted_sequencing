@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RESULTS_PATH="/mnt/chr11/Data/magda"
+RESULTS_PATH="$1"
 #RESULTS_PATH="/home/magda/Dane"  ON THE LAPTOP
 
 ##lanes separately
@@ -18,9 +18,9 @@ RESULTS_PATH="/mnt/chr11/Data/magda"
 #   python extract_results.py $sample 
 #   done
 
-#merged lines
+#merged lanes
 samples_array=( "MARCEL1" "MARCEL2" "MARCEL3" "MARCEL4" )
 for sample in "${samples_array[@]}"
    do
-   python extract_results.py $sample
+   python extract_results.py $sample $RESULTS_PATH
    done
