@@ -31,11 +31,22 @@ def extract_results(sample_name, results_path, results_csv):
 
 	#% of reads kept after trimming
 	with open(LOG_FILE, 'r') as log:
-		trimmomatic_line = log.read().split('Both Surviving:')[1].split('Forward Only Surviving:')[0]
-		both_surviving_num = trimmomatic_line.split(' ')[1]
-		both_surviving_percent = trimmomatic_line.split('(')[1].split('%)')[0]
-	add_column_and_value(results, existing_columns, new_sample_series, "Trimmomatic both surviving num", both_surviving_num)
-	add_column_and_value(results, existing_columns, new_sample_series, "Trimmomatic both surviving perc", both_surviving_percent)
+		#for lane 1
+		trimmomatic_line1 = log.read().split('Both Surviving:')[1].split('Forward Only Surviving:')[0]
+		both_surviving_num1 = trimmomatic_line1.split(' ')[1]
+		both_surviving_percent1 = trimmomatic_line1.split('(')[1].split('%)')[0]
+		#for lane 2
+		trimmomatic_line2 = log.read().split('Both Surviving:')[2].split('Forward Only Surviving:')[0]
+		both_surviving_num2 = trimmomatic_line2.split(' ')[1]
+		both_surviving_percent2 = trimmomatic_line2.split('(')[1].split('%)')[0]
+
+		both_surviving_num_total = int(both_surviving_num1) + int(both_surviving_num2)
+
+	add_column_and_value(results, existing_columns, new_sample_series, "Trimmomatic both surviving num lane 1", both_surviving_num1)
+	add_column_and_value(results, existing_columns, new_sample_series, "Trimmomatic both surviving perc lane 1", both_surviving_percent1)
+	add_column_and_value(results, existing_columns, new_sample_series, "Trimmomatic both surviving num lane 2", both_surviving_num2)
+	add_column_and_value(results, existing_columns, new_sample_series, "Trimmomatic both surviving perc lane 2", both_surviving_percent2)
+	add_column_and_value(results, existing_columns, new_sample_series, "Trimmomatic both surviving num total", both_surviving_num_total)
 
 	#duplicates metrics
 	with open(os.path.join(results_path, sample_name + '_picard_markduplicates_metrics.txt'), 'r') as markduplicates:
