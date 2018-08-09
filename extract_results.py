@@ -31,12 +31,13 @@ def extract_results(sample_name, results_path, results_csv):
 
 	#% of reads kept after trimming
 	with open(LOG_FILE, 'r') as log:
+		elems = log.read().split('Both Surviving:')
 		#for lane 1
-		trimmomatic_line1 = log.read().split('Both Surviving:')[1].split('Forward Only Surviving:')[0]
+		trimmomatic_line1 = elems[1].split('Forward Only Surviving:')[0]
 		both_surviving_num1 = trimmomatic_line1.split(' ')[1]
 		both_surviving_percent1 = trimmomatic_line1.split('(')[1].split('%)')[0]
 		#for lane 2
-		trimmomatic_line2 = log.read().split('Both Surviving:')[2].split('Forward Only Surviving:')[0]
+		trimmomatic_line2 = elems[2].split('Forward Only Surviving:')[0]
 		both_surviving_num2 = trimmomatic_line2.split(' ')[1]
 		both_surviving_percent2 = trimmomatic_line2.split('(')[1].split('%)')[0]
 
