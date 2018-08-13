@@ -40,7 +40,7 @@ echo -e "\n####Process sample:" "$SAMPLE_NAME"
 
 echo -e "\n####Aligning reads - lane 1"
 /home/magda/bowtie2-2.3.4.2-linux-x86_64/bowtie2 \
-   --rd-id "$SAMPLE_NAME"_L001 --rg SM:"$SAMPLE_NAME" --rg LB:NIMBLEGEN --rg PL:illumina \
+   --rg-id "$SAMPLE_NAME"_L001 --rg SM:"$SAMPLE_NAME" --rg LB:NIMBLEGEN --rg PL:illumina \
    -x /home/magda/Homo_sapiens/UCSC/hg38/Sequence/Bowtie2Index/genome \
    -1 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R1_trimmed_minlen50.fastq \
    -2 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R2_trimmed_minlen50.fastq \
@@ -49,7 +49,7 @@ echo -e "\n####Aligning reads - lane 1"
 
 echo -e "\n####Aligning reads - lane 2"
 /home/magda/bowtie2-2.3.4.2-linux-x86_64/bowtie2 \
-   --rd-id "$SAMPLE_NAME"_L002 --rg SM:"$SAMPLE_NAME" --rg LB:NIMBLEGEN --rg PL:illumina \
+   --rg-id "$SAMPLE_NAME"_L002 --rg SM:"$SAMPLE_NAME" --rg LB:NIMBLEGEN --rg PL:illumina \
    -x /home/magda/Homo_sapiens/UCSC/hg38/Sequence/Bowtie2Index/genome \
    -1 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R1_trimmed_minlen50.fastq \
    -2 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R2_trimmed_minlen50.fastq \
