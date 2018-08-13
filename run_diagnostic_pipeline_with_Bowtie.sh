@@ -20,40 +20,40 @@ echo -e "\n####Process sample:" "$SAMPLE_NAME"
 
 #echo -e "\n####Trimming bad reads and getting read of adapters - lane 1"
 #java -Xms4g -Xmx4g -jar /home/magda/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 20 -phred33 \
-   "$FASTQ_PATH"/"$SAMPLE_NAME"_L001_R1_001.fastq \
-   "$FASTQ_PATH"/"$SAMPLE_NAME"_L001_R2_001.fastq \
-   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R1_trimmed_minlen50.fastq \
-   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R1_unpaired_minlen50.fastq \
-   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R2_trimmed_minlen50.fastq \
-   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R2_unpaired_minlen50.fastq \
-   ILLUMINACLIP:/home/magda/Trimmomatic-0.38/adapters/TruSeq3-PE-2.fa:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:20 MINLEN:50
+#   "$FASTQ_PATH"/"$SAMPLE_NAME"_L001_R1_001.fastq \
+#   "$FASTQ_PATH"/"$SAMPLE_NAME"_L001_R2_001.fastq \
+#   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R1_trimmed_minlen50.fastq \
+#   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R1_unpaired_minlen50.fastq \
+#   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R2_trimmed_minlen50.fastq \
+#   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R2_unpaired_minlen50.fastq \
+#   ILLUMINACLIP:/home/magda/Trimmomatic-0.38/adapters/TruSeq3-PE-2.fa:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:20 MINLEN:50
 
 #echo -e "\n####Trimming bad reads and getting read of adapters - lane 2"
 #java -Xms4g -Xmx4g -jar /home/magda/Trimmomatic-0.38/trimmomatic-0.38.jar PE -threads 20 -phred33 \
-   "$FASTQ_PATH"/"$SAMPLE_NAME"_L002_R1_001.fastq \
-   "$FASTQ_PATH"/"$SAMPLE_NAME"_L002_R2_001.fastq \
-   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R1_trimmed_minlen50.fastq \
-   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R1_unpaired_minlen50.fastq \
-   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R2_trimmed_minlen50.fastq \
-   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R2_unpaired_minlen50.fastq \
-   ILLUMINACLIP:/home/magda/Trimmomatic-0.38/adapters/TruSeq3-PE-2.fa:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:20 MINLEN:50
+#   "$FASTQ_PATH"/"$SAMPLE_NAME"_L002_R1_001.fastq \
+#   "$FASTQ_PATH"/"$SAMPLE_NAME"_L002_R2_001.fastq \
+#   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R1_trimmed_minlen50.fastq \
+#   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R1_unpaired_minlen50.fastq \
+#   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R2_trimmed_minlen50.fastq \
+#   "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R2_unpaired_minlen50.fastq \
+#   ILLUMINACLIP:/home/magda/Trimmomatic-0.38/adapters/TruSeq3-PE-2.fa:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:5:20 MINLEN:50
 
 #echo -e "\n####Aligning reads - lane 1"
 #/home/magda/bowtie2-2.3.4.2-linux-x86_64/bowtie2 \
-   -rd-id "$SAMPLE_NAME"_L001 -rg SM:"$SAMPLE_NAME" -rg LB:NIMBLEGEN -rg PL:illumina \
-   -x /home/magda/Homo_sapiens/UCSC/hg38/Sequence/Bowtie2Index/genome \
-   -1 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R1_trimmed_minlen50.fastq \
-   -2 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R2_trimmed_minlen50.fastq \
-   -p 20 -X 1000 | samtools view -Sb - > "$RESULTS_PATH$SAMPLE_NAME"_L001_unsorted.bam
+#   -rd-id "$SAMPLE_NAME"_L001 -rg SM:"$SAMPLE_NAME" -rg LB:NIMBLEGEN -rg PL:illumina \
+#   -x /home/magda/Homo_sapiens/UCSC/hg38/Sequence/Bowtie2Index/genome \
+#   -1 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R1_trimmed_minlen50.fastq \
+#   -2 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L001_R2_trimmed_minlen50.fastq \
+#   -p 20 -X 1000 | samtools view -Sb - > "$RESULTS_PATH$SAMPLE_NAME"_L001_unsorted.bam
 
 
 #echo -e "\n####Aligning reads - lane 2"
 #/home/magda/bowtie2-2.3.4.2-linux-x86_64/bowtie2 \
-   -rd-id "$SAMPLE_NAME"_L002 -rg SM:"$SAMPLE_NAME" -rg LB:NIMBLEGEN -rg PL:illumina \
-   -x /home/magda/Homo_sapiens/UCSC/hg38/Sequence/Bowtie2Index/genome \
-   -1 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R1_trimmed_minlen50.fastq \
-   -2 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R2_trimmed_minlen50.fastq \
-   -p 20 -X 1000 | samtools view -Sb - > "$RESULTS_PATH$SAMPLE_NAME"_L002_unsorted.bam
+#   -rd-id "$SAMPLE_NAME"_L002 -rg SM:"$SAMPLE_NAME" -rg LB:NIMBLEGEN -rg PL:illumina \
+#   -x /home/magda/Homo_sapiens/UCSC/hg38/Sequence/Bowtie2Index/genome \
+#   -1 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R1_trimmed_minlen50.fastq \
+#   -2 "$FASTQ_PATH"/minlen50/"$SAMPLE_NAME"_L002_R2_trimmed_minlen50.fastq \
+#   -p 20 -X 1000 | samtools view -Sb - > "$RESULTS_PATH$SAMPLE_NAME"_L002_unsorted.bam
 
 echo -e "\n####Merge bam for lanes"
 samtools merge "$RESULTS_PATH$SAMPLE_NAME"_unsorted.bam "$RESULTS_PATH$SAMPLE_NAME"_L001_unsorted.bam "$RESULTS_PATH$SAMPLE_NAME"_L002_unsorted.bam
